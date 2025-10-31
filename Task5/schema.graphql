@@ -1,0 +1,53 @@
+schema {
+  query: Query
+}
+
+type Query {
+  """
+  Эквивалент REST: GET /clients/{id}
+  """
+  client(id: ID!): Client
+}
+
+"""
+Клиент. Связанные данные подтягиваются только если запрошены.
+Соответствует REST: /clients/{id}
+"""
+type Client {
+  id: ID!
+  name: String
+  age: Int
+
+  """
+  Документы клиента.
+  Эквивалент REST: GET /clients/{id}/documents
+  """
+  documents: [Document!]!
+
+  """
+  Родственники клиента.
+  Эквивалент REST: GET /clients/{id}/relatives
+  """
+  relatives: [Relative!]!
+}
+
+"""
+Соответствует Swagger-типу Document.
+"""
+type Document {
+  id: ID!
+  type: String
+  number: String
+  issueDate: String
+  expiryDate: String
+}
+
+"""
+Соответствует Swagger-типу Relative.
+"""
+type Relative {
+  id: ID!
+  relationType: String
+  name: String
+  age: Int
+}
