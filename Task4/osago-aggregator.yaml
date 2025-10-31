@@ -1,0 +1,106 @@
+﻿openapi: 3.0.3
+info:
+  title: osago-aggregator
+  version: 1.0.0
+  description: >
+    Внутренний REST для core-app. Запрос внешних страховых длится до 60 секунд,
+    но этот API отвечает сразу (POST - 202) и отдаёт моментальный снимок (GET - 200).
+
+paths:
+  /v1/osago/quote-requests:
+    post:
+      summary: Старт котировочной сессии ОСАГО (fan-out ко всем страховым)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuoteRequest"
+            example:
+              vehicle: { reg_number: "A123BC178" }
+              driver: { age: 34, experience_years: 12 }
+              region_code: "78"
+      responses:
+        "202":
+          description: Accepted - сессия создана
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AcceptedResponse" }
+              example: { request_id: "rq_01HZX3T2N5SE8K62Z6WZ9W7X6M" }
+        "400": { description: Bad Request }
+        "500": { description: Internal Error }
+
+  /v1/osago/quote-requests/{id}/results:
+    get:
+      summary: Текущий снимок результатов по заявке (partial/complete)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK - моментальный snapshot
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ResultsSnapshot" }
+              example:
+                request_id: "rq_01HZX3T2N5SE8K62Z6WZ9W7X6M"
+                state: "in_progress"
+                partners_total: 5
+                received_count: 2
+                results:
+                  - partner_code: "insurerA"
+                    status: "ready"
+                    price: 12345.67
+                    currency: "RUB"
+                  - partner_code: "insurerB"
+                    status: "pending"
+        "404": { description: Not Found }
+        "500": { description: Internal Error }
+
+components:
+  schemas:
+    QuoteRequest:
+      type: object
+      required: [vehicle, driver, region_code]
+      properties:
+        vehicle:
+          type: object
+          required: [reg_number]
+          properties:
+            reg_number: { type: string, description: "Госномер" }
+        driver:
+          type: object
+          required: [age, experience_years]
+          properties:
+            age: { type: integer, minimum: 18, maximum: 100 }
+            experience_years: { type: integer, minimum: 0, maximum: 80 }
+        region_code: { type: string, example: "78" }
+
+    AcceptedResponse:
+      type: object
+      required: [request_id]
+      properties:
+        request_id: { type: string }
+
+    QuoteItem:
+      type: object
+      required: [partner_code, status]
+      properties:
+        partner_code: { type: string }
+        status: { type: string, enum: [pending, ready, timeout, failed] }
+        price: { type: number, format: double, nullable: true }
+        currency: { type: string, nullable: true, example: "RUB" }
+
+    ResultsSnapshot:
+      type: object
+      required: [request_id, state, partners_total, received_count, results]
+      properties:
+        request_id: { type: string }
+        state: { type: string, enum: [in_progress, completed, timed_out] }
+        partners_total: { type: integer }
+        received_count: { type: integer }
+        results:
+          type: array
+          items: { $ref: "#/components/schemas/QuoteItem" }
