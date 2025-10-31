@@ -1,2 +1,9 @@
-# architecture-insuretech
-architecture-insuretech
+# Сдача проектной работы 8 спринта
+
+## Задание 1. Проектирование технологической архитектуры
+
+См. файлы в папке Task1:
+
+- [`drawio`](<Task1/InureTech_технологическая архитектура_to-be.drawio>)
+- [`svg-вариант`](<Task1/InureTech_технологическая архитектура_to-be.drawio.svg>)
+- [`png-вариант`](<Task1/InureTech_технологическая архитектура_to-be.drawio.png>)
