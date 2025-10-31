@@ -7,3 +7,33 @@
 - [`drawio`](<Task1/InureTech_технологическая архитектура_to-be.drawio>)
 - [`svg-вариант`](<Task1/InureTech_технологическая архитектура_to-be.drawio.svg>)
 - [`png-вариант`](<Task1/InureTech_технологическая архитектура_to-be.drawio.png>)
+
+## Задание 2. Динамическое масштабирование контейнеров
+
+Команды по запуску и настройке кластера с деплоем приложения представлены в [Makefile](Makefile).
+
+Скрины, демонстрирующие успешный процесс автомасштабирования контейнеров:
+
+### Веб-интерфейс minikube dashboard, демонстрирующий несколько под (pods):
+
+![1.png](Task2/screens/1.png)
+
+### Веб-интерфейс minikube dashboard, демонстрирующий несколько под (workload):
+
+![2.png](Task2/screens/2.png)
+
+### Веб-интерфейс locust, демонстрирующий рост нагрузки:
+
+![3.png](Task2/screens/3.png)
+
+### Скрин статуса HPA (kubectl):
+
+![4.png](Task2/screens/4.png)
+
+### Ивенты HPA, среди которых есть события "rescale" (kubectl):
+
+![5.png](Task2/screens/5.png)
+
+### Поды (kubectl):
+
+![6.png](Task2/screens/6.png)
