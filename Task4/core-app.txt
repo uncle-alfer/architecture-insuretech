@@ -1,0 +1,10 @@
+﻿# SSE-стрим инкрементальных результатов ОСАГО
+GET /api/osago/quote-requests/{id}/stream
+Content-Type: text/event-stream
+
+data: {"partner":"insurerA","status":"ready","price":12345.67,"currency":"RUB"}
+data: {"partner":"insurerB","status":"pending"}
+data: {"partner":"insurerC","status":"timeout"}
+
+# Fallback (polling), если SSE недоступен:
+GET /api/osago/quote-requests/{id}   # отдаёт тот же snapshot, что и агрегатор /results
